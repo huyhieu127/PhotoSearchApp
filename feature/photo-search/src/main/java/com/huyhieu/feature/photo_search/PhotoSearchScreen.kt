@@ -242,6 +242,7 @@ fun PhotoSearchUi(
                             animatedVisibilityScope = animatedScope,
                         ),
                         text = state.text,
+                        query = state.query,
                         isAutoFocused = state.isFocused,
                         onValueChange = {
                             onEvent(PhotoSearchContract.Event.OnGetSuggestedKeyword(it))
@@ -390,8 +391,7 @@ fun SearchHistory(
                     ) {
                         Icon(
                             painterResource(R.drawable.ic_clock),
-                            modifier = Modifier
-                                .clip(CircleShape),
+                            modifier = Modifier.clip(CircleShape),
                             contentDescription = null,
                             tint = Color.DarkGray,
                         )
@@ -450,11 +450,9 @@ fun Suggestion(
         ) {
             (suggestions).onEach {
                 Text(
-                    text = it,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    modifier = Modifier
+                    text = it, style = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                ), modifier = Modifier
                         .clip(CircleShape)
                         .clickable {
                             onItemClick(it)
@@ -472,6 +470,7 @@ fun Suggestion(
 fun SearchTextField(
     modifier: Modifier = Modifier,
     text: String = "",
+    query: String = "",
     isAutoFocused: Boolean = true,
     onFocused: (Boolean) -> Unit = {},
     onValueChange: (String) -> Unit = {},
@@ -498,8 +497,10 @@ fun SearchTextField(
     LaunchedEffect(Unit) {
         delay(300)
         isShowHint = true
-        delay(300)
-        focusRequester.requestFocus()
+        if (query.isEmpty()) {
+            delay(300)
+            focusRequester.requestFocus()
+        }
     }
 
     Row(
@@ -521,17 +522,14 @@ fun SearchTextField(
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = if (value.isNotEmpty()) ImeAction.Search else ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    keyboard?.hide()
-                    focusManager.clearFocus()
-                    onSearch(value)
-                },
-                onDone = {
-                    keyboard?.hide()
-                    focusManager.clearFocus()
-                }
-            ),
+            keyboardActions = KeyboardActions(onSearch = {
+                keyboard?.hide()
+                focusManager.clearFocus()
+                onSearch(value)
+            }, onDone = {
+                keyboard?.hide()
+                focusManager.clearFocus()
+            }),
             textStyle = TextStyle(),
             onValueChange = {
                 value = it

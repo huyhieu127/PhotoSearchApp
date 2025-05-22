@@ -90,24 +90,26 @@ fun PhotosGridUi(
                 .height(1.dp)
                 .background(Color.LightGray.copy(0.2f)),
         )
-        FilterBox(
-            orientation = orientation,
-            size = size,
-            color = color,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .padding(vertical = 4.dp),
-            onOrientationClick = {
-                isShowBottomSheet = true
-            },
-            onSizeClick = {
-                isShowBottomSheet = true
-            },
-            onColorClick = {
-                isShowBottomSheet = true
-            }
-        )
+        if (photos.isNotEmpty()){
+            FilterBox(
+                orientation = orientation,
+                size = size,
+                color = color,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .padding(vertical = 4.dp),
+                onOrientationClick = {
+                    isShowBottomSheet = true
+                },
+                onSizeClick = {
+                    isShowBottomSheet = true
+                },
+                onColorClick = {
+                    isShowBottomSheet = true
+                }
+            )
+        }
         AppPullToRefresh(
             onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize(),
